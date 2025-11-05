@@ -9,6 +9,9 @@ import agencyPartnershipRoutes from "./routes/agencyPartnershipRoutes.js";
 import subscriptionRoutes from "./routes/subscriptionRoutes.js";
 import authRoutes from "./routes/auth.js";
 import successStoryRoutes from "./routes/successStoryRoutes.js";
+import heroRoutes from "./routes/heroRoutes.js";
+import teamsSectionRoutes from "./routes/teamsSectionRoutes.js";
+import aboutRoutes from "./routes/aboutRoutes.js"
 
 // Load environment variables
 dotenv.config();
@@ -55,6 +58,9 @@ app.use("/api/join-team", joinOurTeamRoutes);
 app.use("/api/agency-partnership", agencyPartnershipRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/success-stories", successStoryRoutes);
+app.use("/api/hero", heroRoutes);
+app.use("/api/teams-section", teamsSectionRoutes);
+app.use("/api/about", aboutRoutes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
