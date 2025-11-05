@@ -30,7 +30,7 @@ const corsOptions = {
     "https://gtw-admin.vercel.app",
     "https://gtw-admin.vercel.app/",
     "https://generaltechworks.com",
-    "https://www.generaltechworks.com",
+    "https://hirezy-web.vercel.app/",
     "http://localhost:5050",
   ],
   credentials: true,
