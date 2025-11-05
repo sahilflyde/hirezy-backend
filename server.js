@@ -31,6 +31,7 @@ const corsOptions= [
     "https://generaltechworks.com",
     "https://hirezy-web.vercel.app",
     "http://localhost:5050",
+    "https://hirezy-admin.vercel.app",
     "*",
   ];
 
