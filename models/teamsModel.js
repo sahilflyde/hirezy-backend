@@ -9,8 +9,8 @@ const teamsCardSchema = new mongoose.Schema({
     enum: ["top", "bottom", "right"],
     default: "top",
   },
-  colSpan: Number,
-  rowSpan: Number,
+  colSpan: { type: Number, default: 1 },
+  rowSpan: { type: Number, default: 1 },
 });
 
 const teamsSchema = new mongoose.Schema(
@@ -18,9 +18,21 @@ const teamsSchema = new mongoose.Schema(
     label: String,
     title: String,
     subtitle: String,
+
+    // ✅ Grid Controls
     minColWidth: { type: String, default: "310px" },
     gap: { type: String, default: "32px" },
+
+    // ✅ new field
+    columnsMode: {
+      type: String,
+      enum: ["auto", "custom"],
+      default: "auto",
+    },
+
+    // ✅ only used when columnsMode = custom
     columns: { type: Number, default: 3 },
+
     centerTitle: {
       type: String,
       enum: ["left", "center", "right"],
