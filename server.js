@@ -11,7 +11,7 @@ import authRoutes from "./routes/auth.js";
 import successStoryRoutes from "./routes/successStoryRoutes.js";
 import heroRoutes from "./routes/heroRoutes.js";
 import teamsSectionRoutes from "./routes/teamsSectionRoutes.js";
-import aboutRoutes from "./routes/aboutRoutes.js"
+import aboutRoutes from "./routes/aboutRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -32,6 +32,7 @@ const corsOptions = {
     "https://generaltechworks.com",
     "https://hirezy-web.vercel.app/",
     "http://localhost:5050",
+    "*",
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
@@ -60,7 +61,7 @@ app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/success-stories", successStoryRoutes);
 app.use("/api/hero", heroRoutes);
 app.use("/api/teams-section", teamsSectionRoutes);
-app.use("/api/about", aboutRoutes)
+app.use("/api/about", aboutRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
