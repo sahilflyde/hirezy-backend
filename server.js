@@ -12,8 +12,10 @@ import successStoryRoutes from "./routes/successStoryRoutes.js";
 import heroRoutes from "./routes/heroRoutes.js";
 import teamsSectionRoutes from "./routes/teamsSectionRoutes.js";
 import aboutRoutes from "./routes/aboutRoutes.js";
-import whyChooseRoutes from "./routes/whyChooseRoutes.js"
-import featureSectionRoutes from "./routes/featuresSectionRoutes.js"
+import whyChooseRoutes from "./routes/whyChooseRoutes.js";
+import featureSectionRoutes from "./routes/featuresSectionRoutes.js";
+import transformSectionRoutes from "./routes/transformSectionRoutes.js";
+import metricsSectionRoutes from "./routes/metricsSectionRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -37,7 +39,6 @@ const corsOptions = [
   "https://hirezy-admin.vercel.app",
   "*",
 ];
-
 
 // Middleware
 app.use(
@@ -67,8 +68,10 @@ app.use("/api/success-stories", successStoryRoutes);
 app.use("/api/hero", heroRoutes);
 app.use("/api/teams-section", teamsSectionRoutes);
 app.use("/api/about", aboutRoutes);
-app.use("/api/why-choose", whyChooseRoutes)
-app.use("/api/features-section", featureSectionRoutes)
+app.use("/api/why-choose", whyChooseRoutes);
+app.use("/api/features-section", featureSectionRoutes);
+app.use("/api/transform-section", transformSectionRoutes);
+app.use("/api/metrics-section", metricsSectionRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
