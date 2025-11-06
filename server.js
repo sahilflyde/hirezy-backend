@@ -12,6 +12,8 @@ import successStoryRoutes from "./routes/successStoryRoutes.js";
 import heroRoutes from "./routes/heroRoutes.js";
 import teamsSectionRoutes from "./routes/teamsSectionRoutes.js";
 import aboutRoutes from "./routes/aboutRoutes.js";
+import whyChooseRoutes from "./routes/whyChooseRoutes.js"
+import featureSectionRoutes from "./routes/featuresSectionRoutes.js"
 
 // Load environment variables
 dotenv.config();
@@ -23,17 +25,18 @@ connectDB();
 const app = express();
 
 // CORS Configuration
-const corsOptions= [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://gtw-admin.vercel.app",
-    "https://gtw-admin.vercel.app/",
-    "https://generaltechworks.com",
-    "https://hirezy-web.vercel.app",
-    "http://localhost:5050",
-    "https://hirezy-admin.vercel.app",
-    "*",
-  ];
+const corsOptions = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://gtw-admin.vercel.app",
+  "https://gtw-admin.vercel.app/",
+  "https://generaltechworks.com",
+  "https://hirezy-web.vercel.app",
+  "http://localhost:5050",
+  "https://hirezy-admin.vercel.app",
+  "*",
+];
 
 
 // Middleware
@@ -64,6 +67,8 @@ app.use("/api/success-stories", successStoryRoutes);
 app.use("/api/hero", heroRoutes);
 app.use("/api/teams-section", teamsSectionRoutes);
 app.use("/api/about", aboutRoutes);
+app.use("/api/why-choose", whyChooseRoutes)
+app.use("/api/features-section", featureSectionRoutes)
 
 // Error handling middleware
 app.use((err, req, res, next) => {
