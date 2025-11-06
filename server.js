@@ -16,6 +16,8 @@ import whyChooseRoutes from "./routes/whyChooseRoutes.js";
 import featureSectionRoutes from "./routes/featuresSectionRoutes.js";
 import transformSectionRoutes from "./routes/transformSectionRoutes.js";
 import metricsSectionRoutes from "./routes/metricsSectionRoutes.js";
+import integrationSectionRoutes from "./routes/integrationSectionRoutes.js";
+import pricingSectionRoutes from "./routes/pricingSectionRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -72,6 +74,8 @@ app.use("/api/why-choose", whyChooseRoutes);
 app.use("/api/features-section", featureSectionRoutes);
 app.use("/api/transform-section", transformSectionRoutes);
 app.use("/api/metrics-section", metricsSectionRoutes);
+app.use("/api/integration-section", integrationSectionRoutes);
+app.use("/api/pricing-section", pricingSectionRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
