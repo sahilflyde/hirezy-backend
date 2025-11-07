@@ -20,6 +20,7 @@ import integrationSectionRoutes from "./routes/integrationSectionRoutes.js";
 import pricingSectionRoutes from "./routes/pricingSectionRoutes.js";
 import faqRoutes from "./routes/faqRoutes.js";
 import footerRoutes from "./routes/footerRoutes.js";
+import testimonialSectionRoutes from "./routes/testimonialsRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -80,6 +81,7 @@ app.use("/api/integration-section", integrationSectionRoutes);
 app.use("/api/pricing-section", pricingSectionRoutes);
 app.use("/api/faq-section", faqRoutes);
 app.use("/api/footer-section", footerRoutes);
+app.use("/api/testimonial-section", testimonialSectionRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
