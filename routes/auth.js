@@ -34,7 +34,7 @@ router.put('/profile', authenticateToken, updateProfile);
 router.put('/change-password', authenticateToken, changePassword);
 
 // Admin routes
-router.get('/users', authenticateToken, requireAdmin, getAllUsers);
+router.get('/users',getAllUsers);
 router.delete('/users/:id', authenticateToken, requireAdmin, deleteUser);
 
 export default router;
