@@ -11,6 +11,7 @@ const HeroSchema = new mongoose.Schema(
     rightImage: String,
   },
   { timestamps: true }
+  
 );
 
 export default mongoose.model("Hero", HeroSchema);
