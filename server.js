@@ -18,6 +18,8 @@ import transformSectionRoutes from "./routes/transformSectionRoutes.js";
 import metricsSectionRoutes from "./routes/metricsSectionRoutes.js";
 import integrationSectionRoutes from "./routes/integrationSectionRoutes.js";
 import pricingSectionRoutes from "./routes/pricingSectionRoutes.js";
+import faqRoutes from "./routes/faqRoutes.js";
+import footerRoutes from "./routes/footerRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -76,6 +78,8 @@ app.use("/api/transform-section", transformSectionRoutes);
 app.use("/api/metrics-section", metricsSectionRoutes);
 app.use("/api/integration-section", integrationSectionRoutes);
 app.use("/api/pricing-section", pricingSectionRoutes);
+app.use("/api/faq-section", faqRoutes);
+app.use("/api/footer-section", footerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
