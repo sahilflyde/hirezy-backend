@@ -21,7 +21,8 @@ import pricingSectionRoutes from "./routes/pricingSectionRoutes.js";
 import faqRoutes from "./routes/faqRoutes.js";
 import footerRoutes from "./routes/footerRoutes.js";
 import testimonialSectionRoutes from "./routes/testimonialsRoutes.js";
-import headerSectionRoutes from "./routes/headerRoutes.js"
+import headerSectionRoutes from "./routes/headerRoutes.js";
+import createdPageRoutes from "./routes/createdPageRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -85,6 +86,7 @@ app.use("/api/faq-section", faqRoutes);
 app.use("/api/footer-section", footerRoutes);
 app.use("/api/testimonial-section", testimonialSectionRoutes);
 app.use("/api/header-section", headerSectionRoutes);
+app.use("/api/createdpage", createdPageRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -95,7 +97,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT =  5000;
+const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
