@@ -3,8 +3,8 @@ import fetch from "node-fetch";
 import dotenv from "dotenv";
 dotenv.config();
 
-const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
-const PROJECT_ID = process.env.PROJECT_ID;
+const VERCEL_TOKEN = "oL7Ooath3u0gsv8DLE48XZa4";
+const PROJECT_ID = "prj_C31ra7RLyFeF7cVk1qI2GpndDBdy";
 
 export const addDomain = async (req, res) => {
   try {
