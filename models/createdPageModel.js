@@ -9,7 +9,7 @@ const ChildSchema = new mongoose.Schema(
 );
 
 const ComponentSchema = new mongoose.Schema(
-  {
+  { 
     type: String,
     props: {},
     children: [ChildSchema],

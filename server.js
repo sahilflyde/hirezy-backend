@@ -23,6 +23,9 @@ import footerRoutes from "./routes/footerRoutes.js";
 import testimonialSectionRoutes from "./routes/testimonialsRoutes.js";
 import headerSectionRoutes from "./routes/headerRoutes.js";
 import createdPageRoutes from "./routes/createdPageRoutes.js";
+import domainRoutes from "./routes/domainRoutes.js"
+import DomainMap from "./models/domainMapModel.js"
+import CreatedPage from "./models/createdPageModel.js";
 
 // Load environment variables
 dotenv.config();
@@ -87,6 +90,34 @@ app.use("/api/footer-section", footerRoutes);
 app.use("/api/testimonial-section", testimonialSectionRoutes);
 app.use("/api/header-section", headerSectionRoutes);
 app.use("/api/createdpage", createdPageRoutes);
+
+
+app.use("/api/domain", domainRoutes);
+
+
+
+app.get("*", async (req, res) => {
+  const host = req.headers.host;
+
+  const map = await DomainMap.findOne({ domain: host, status: "verified" });
+  if (!map) return res.send("🔴 Domain not configured!");
+
+  const page = await CreatedPage.findOne({ slug: map.pageSlug });
+  if (!page) return res.send("⚠️ Page not found!");
+
+  return res.send(`
+    <html>
+      <head><title>${map.pageSlug}</title></head>
+      <body>
+        <div id="root"></div>
+        <script>
+          window.pageData = ${JSON.stringify(page.components)};
+        </script>
+        <script src="/main.js"></script>
+      </body>
+    </html>
+  `);
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
