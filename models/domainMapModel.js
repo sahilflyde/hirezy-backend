@@ -8,6 +8,6 @@ const DomainMapSchema = new mongoose.Schema(
     verificationToken: { type: String }, 
   },
   { timestamps: true }
-);
+); 
 
 export default mongoose.model("DomainMap", DomainMapSchema);

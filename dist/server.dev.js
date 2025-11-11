@@ -126,53 +126,77 @@ var io = new _socket.Server(server, {
 });
 global.io = io;
 app.get("*", function _callee(req, res) {
-  var host, map, page;
+  var host, map, page, html;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
+          _context.prev = 0;
           host = req.headers.host;
-          _context.next = 3;
+
+          if (host) {
+            _context.next = 4;
+            break;
+          }
+
+          return _context.abrupt("return", res.status(400).send("❌ Host header missing"));
+
+        case 4:
+          // ✅ remove www.
+          host = host.replace("www.", "");
+          console.log("🌐 Incoming domain:", host); // ✅ find domain mapping in DB
+
+          _context.next = 8;
           return regeneratorRuntime.awrap(_domainMapModel["default"].findOne({
             domain: host,
             status: "verified"
           }));
 
-        case 3:
+        case 8:
           map = _context.sent;
 
           if (map) {
-            _context.next = 6;
+            _context.next = 12;
             break;
           }
 
-          return _context.abrupt("return", res.send("🔴 Domain not configured!"));
+          console.log("❌ Domain not found or not verified");
+          return _context.abrupt("return", res.send("🔴 Domain not configured or pending verification."));
 
-        case 6:
-          _context.next = 8;
+        case 12:
+          _context.next = 14;
           return regeneratorRuntime.awrap(_createdPageModel["default"].findOne({
             slug: map.pageSlug
           }));
 
-        case 8:
+        case 14:
           page = _context.sent;
 
           if (page) {
-            _context.next = 11;
+            _context.next = 18;
             break;
           }
 
-          return _context.abrupt("return", res.send("⚠️ Page not found!"));
+          console.log("⚠ Page not found for slug:", map.pageSlug);
+          return _context.abrupt("return", res.send("⚠ Page not found! Ask admin to publish again."));
 
-        case 11:
-          return _context.abrupt("return", res.send("\n    <html>\n      <head><title>".concat(map.pageSlug, "</title></head>\n      <body>\n        <div id=\"root\"></div>\n        <script>\n          window.pageData = ").concat(JSON.stringify(page.components), ";\n        </script>\n        <script src=\"/main.js\"></script>\n      </body>\n    </html>\n  ")));
+        case 18:
+          // ✅ Render HTML
+          html = "\n      <!DOCTYPE html>\n      <html>\n        <head>\n          <title>".concat(page.title || map.pageSlug, "</title>\n          <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n          <meta charset=\"UTF-8\" />\n          <style>\n            body { margin:0; padding:0; font-family: sans-serif; }\n          </style>\n        </head>\n        <body>\n          <div id=\"root\"></div>\n\n          <script>\n            window.pageData = ").concat(JSON.stringify(page.components), ";\n          </script>\n\n          <script src=\"/main.js\"></script>\n        </body>\n      </html>\n    ");
+          return _context.abrupt("return", res.status(200).send(html));
 
-        case 12:
+        case 22:
+          _context.prev = 22;
+          _context.t0 = _context["catch"](0);
+          console.error("SERVER ERROR:", _context.t0);
+          res.status(500).send("⚠ Server error occurred");
+
+        case 26:
         case "end":
           return _context.stop();
       }
     }
-  });
+  }, null, null, [[0, 22]]);
 }); // Error handling middleware
 
 app.use(function (err, req, res, next) {

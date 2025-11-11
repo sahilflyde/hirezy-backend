@@ -1,7 +1,10 @@
-import { addDomain, getDomainStatus, verifyDomain } from "../controllers/domainController.js";
+import {
+  addDomain,
+  getDomainStatus,
+  verifyDomain,
+} from "../controllers/domainController.js";
 
-
-import express from "express"
+import express from "express";
 const router = express.Router();
 
 router.post("/add", addDomain);

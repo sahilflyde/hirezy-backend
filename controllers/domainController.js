@@ -75,19 +75,25 @@ export const addDomain = async (req, res) => {
     return res.json({
       success: true,
       status: "pending",
-      msg: "Add TXT to verify",
-      dns: {
-        type: "TXT",
-        host: "_vercel",
-        value: newToken,
-      },
+      msg: "Add following DNS:",
+      dns: [
+        {
+          type: "TXT",
+          host: "_vercel",
+          value: token,
+        },
+        {
+          type: "CNAME",
+          host: "@",
+          value: "cname.vercel-dns.com",
+        },
+      ],
     });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Server error" });
   }
 };
-
 
 // ✅ Check live DNS status (NO DB update)
 export const getDomainStatus = async (req, res) => {
@@ -112,7 +118,6 @@ export const getDomainStatus = async (req, res) => {
   }
 };
 
-// ✅ Verify: ONLY update DB if Vercel confirms real verification
 export const verifyDomain = async (req, res) => {
   try {
     const { domain } = req.params;
@@ -128,19 +133,30 @@ export const verifyDomain = async (req, res) => {
     const data = await vercelRes.json();
 
     if (data?.verified === true) {
+      // ✅ Update DB
       await DomainMap.findOneAndUpdate({ domain }, { status: "verified" });
+
+      // ✅ IMPORTANT: ATTACH DOMAIN TO PROJECT
+      await fetch(`https://api.vercel.com/v9/projects/${PROJECT_ID}/domains`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${VERCEL_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: domain }),
+      });
 
       return res.json({
         verified: true,
-        msg: "✅ Domain verified from Vercel",
+        msg: "✅ Domain verified & connected to project",
       });
     }
 
     return res.json({
       verified: false,
-      msg: "⚠️ Not verified yet. Add DNS TXT and wait.",
+      msg: "⚠️ TXT not detected yet",
     });
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };

@@ -112,26 +112,59 @@ const io = new Server(server, {
 global.io = io;
 
 app.get("*", async (req, res) => {
-  const host = req.headers.host;
+  try {
+    let host = req.headers.host;
 
-  const map = await DomainMap.findOne({ domain: host, status: "verified" });
-  if (!map) return res.send("🔴 Domain not configured!");
+    if (!host) return res.status(400).send("❌ Host header missing");
 
-  const page = await CreatedPage.findOne({ slug: map.pageSlug });
-  if (!page) return res.send("⚠️ Page not found!");
+    // ✅ remove www.
+    host = host.replace("www.", "");
 
-  return res.send(`
-    <html>
-      <head><title>${map.pageSlug}</title></head>
-      <body>
-        <div id="root"></div>
-        <script>
-          window.pageData = ${JSON.stringify(page.components)};
-        </script>
-        <script src="/main.js"></script>
-      </body>
-    </html>
-  `);
+    console.log("🌐 Incoming domain:", host);
+
+    // ✅ find domain mapping in DB
+    const map = await DomainMap.findOne({ domain: host, status: "verified" });
+    if (!map) {
+      console.log("❌ Domain not found or not verified");
+      return res.send("🔴 Domain not configured or pending verification.");
+    }
+
+    // ✅ get linked page
+    const page = await CreatedPage.findOne({ slug: map.pageSlug });
+    if (!page) {
+      console.log("⚠ Page not found for slug:", map.pageSlug);
+      return res.send("⚠ Page not found! Ask admin to publish again.");
+    }
+
+    // ✅ Render HTML
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${page.title || map.pageSlug}</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta charset="UTF-8" />
+          <style>
+            body { margin:0; padding:0; font-family: sans-serif; }
+          </style>
+        </head>
+        <body>
+          <div id="root"></div>
+
+          <script>
+            window.pageData = ${JSON.stringify(page.components)};
+          </script>
+
+          <script src="/main.js"></script>
+        </body>
+      </html>
+    `;
+
+    return res.status(200).send(html);
+  } catch (err) {
+    console.error("SERVER ERROR:", err);
+    res.status(500).send("⚠ Server error occurred");
+  }
 });
 
 // Error handling middleware
