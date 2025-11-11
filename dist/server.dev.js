@@ -184,6 +184,6 @@ app.use(function (err, req, res, next) {
 }); // Start server
 
 var PORT = 5000;
-app.listen(PORT, function () {
-  console.log("Server is running on port ".concat(PORT));
+server.listen(PORT, function () {
+  console.log("Server + Socket running on port ".concat(PORT));
 });
