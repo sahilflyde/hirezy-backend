@@ -120,7 +120,7 @@ var server = _http["default"].createServer(app);
 
 var io = new _socket.Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:5173", "*", "https://hirezy-frontend.vercel.app/"],
+    origin: ["http://localhost:3000", "http://localhost:5173", "https://hirezy-frontend.vercel.app/", "*"],
     methods: ["GET", "POST"]
   }
 });

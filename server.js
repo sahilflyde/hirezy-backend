@@ -102,8 +102,8 @@ const io = new Server(server, {
     origin: [
       "http://localhost:3000",
       "http://localhost:5173",
-      "*",
       "https://hirezy-frontend.vercel.app/",
+      "*",
     ],
     methods: ["GET", "POST"],
   },
