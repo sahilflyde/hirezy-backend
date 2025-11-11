@@ -26,7 +26,7 @@ import createdPageRoutes from "./routes/createdPageRoutes.js";
 import domainRoutes from "./routes/domainRoutes.js"
 import DomainMap from "./models/domainMapModel.js"
 import CreatedPage from "./models/createdPageModel.js";
-
+import themeSettingRoutes from "./routes/themeSettingRoutes.js"
 // Load environment variables
 dotenv.config();
 
@@ -90,6 +90,7 @@ app.use("/api/footer-section", footerRoutes);
 app.use("/api/testimonial-section", testimonialSectionRoutes);
 app.use("/api/header-section", headerSectionRoutes);
 app.use("/api/createdpage", createdPageRoutes);
+app.use("/api", themeSettingRoutes);
 
 
 app.use("/api/domain", domainRoutes);

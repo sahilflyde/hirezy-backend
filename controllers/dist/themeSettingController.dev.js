@@ -1,0 +1,112 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateThemeSetting = exports.getThemeSetting = void 0;
+
+var _themeSettingModel = _interopRequireDefault(require("../models/themeSettingModel.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var getThemeSetting = function getThemeSetting(req, res) {
+  var setting;
+  return regeneratorRuntime.async(function getThemeSetting$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return regeneratorRuntime.awrap(_themeSettingModel["default"].findOne());
+
+        case 2:
+          setting = _context.sent;
+
+          if (setting) {
+            _context.next = 7;
+            break;
+          }
+
+          _context.next = 6;
+          return regeneratorRuntime.awrap(_themeSettingModel["default"].create({
+            theme: "light"
+          }));
+
+        case 6:
+          setting = _context.sent;
+
+        case 7:
+          res.json({
+            success: true,
+            theme: setting.theme
+          });
+
+        case 8:
+        case "end":
+          return _context.stop();
+      }
+    }
+  });
+};
+
+exports.getThemeSetting = getThemeSetting;
+
+var updateThemeSetting = function updateThemeSetting(req, res) {
+  var theme, setting;
+  return regeneratorRuntime.async(function updateThemeSetting$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          theme = req.body.theme;
+
+          if (["light", "dark"].includes(theme)) {
+            _context2.next = 3;
+            break;
+          }
+
+          return _context2.abrupt("return", res.status(400).json({
+            success: false,
+            message: "Invalid theme"
+          }));
+
+        case 3:
+          _context2.next = 5;
+          return regeneratorRuntime.awrap(_themeSettingModel["default"].findOne());
+
+        case 5:
+          setting = _context2.sent;
+
+          if (setting) {
+            _context2.next = 12;
+            break;
+          }
+
+          _context2.next = 9;
+          return regeneratorRuntime.awrap(_themeSettingModel["default"].create({
+            theme: theme
+          }));
+
+        case 9:
+          setting = _context2.sent;
+          _context2.next = 15;
+          break;
+
+        case 12:
+          setting.theme = theme;
+          _context2.next = 15;
+          return regeneratorRuntime.awrap(setting.save());
+
+        case 15:
+          res.json({
+            success: true,
+            theme: theme
+          });
+
+        case 16:
+        case "end":
+          return _context2.stop();
+      }
+    }
+  });
+};
+
+exports.updateThemeSetting = updateThemeSetting;

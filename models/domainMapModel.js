@@ -4,7 +4,8 @@ const DomainMapSchema = new mongoose.Schema(
   {
     domain: { type: String, required: true, unique: true },
     pageSlug: { type: String, required: true },
-    status: { type: String, default: "pending" }, // pending / verified
+    status: { type: String, default: "pending" }, 
+    verificationToken: { type: String }, 
   },
   { timestamps: true }
 );

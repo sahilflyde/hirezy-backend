@@ -1,7 +1,5 @@
 import DomainMap from "../models/domainMapModel.js";
 import fetch from "node-fetch";
-import dotenv from "dotenv";
-dotenv.config();
 
 const VERCEL_TOKEN = "oL7Ooath3u0gsv8DLE48XZa4";
 const PROJECT_ID = "prj_C31ra7RLyFeF7cVk1qI2GpndDBdy";
@@ -16,26 +14,82 @@ export const addDomain = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    const vercelRes = await fetch(
-      `https://api.vercel.com/v9/projects/${PROJECT_ID}/domains`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${VERCEL_TOKEN}`,
-          "Content-Type": "application/json",
+    // ✅ First: check domain info from Vercel
+    const check = await fetch(`https://api.vercel.com/v6/domains/${domain}`, {
+      headers: { Authorization: `Bearer ${VERCEL_TOKEN}` },
+    });
+    const checkJson = await check.json();
+
+    // ✅ If domain exists + verified already
+    if (checkJson?.verified) {
+      map.status = "verified";
+      await map.save();
+      return res.json({
+        success: true,
+        status: "verified",
+        msg: "✅ Domain already verified",
+      });
+    }
+
+    // ✅ If domain exists but NOT verified, get TXT token
+    const token =
+      checkJson?.verification?.[0]?.value ||
+      checkJson?.txtVerification?.token ||
+      null;
+
+    if (token) {
+      map.verificationToken = token;
+      await map.save();
+      return res.json({
+        success: true,
+        status: "pending",
+        msg: "Add TXT to verify",
+        dns: {
+          type: "TXT",
+          host: "_vercel",
+          value: token,
         },
-        body: JSON.stringify({ name: domain }),
-      }
-    );
+      });
+    }
 
-    const data = await vercelRes.json();
-    res.json({ success: true, map, vercel: data });
+    // ✅ If no token → add domain to project explicitly
+    const addResp = await fetch(`https://api.vercel.com/v10/domains`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${VERCEL_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: domain, projectId: PROJECT_ID }),
+    });
 
+    const addJson = await addResp.json();
+
+    const newToken =
+      addJson?.verification?.[0]?.value ||
+      addJson?.txtVerification?.token ||
+      null;
+
+    map.verificationToken = newToken;
+    await map.save();
+
+    return res.json({
+      success: true,
+      status: "pending",
+      msg: "Add TXT to verify",
+      dns: {
+        type: "TXT",
+        host: "_vercel",
+        value: newToken,
+      },
+    });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ error: "Server error" });
   }
 };
 
+
+// ✅ Check live DNS status (NO DB update)
 export const getDomainStatus = async (req, res) => {
   try {
     const { domain } = req.params;
@@ -48,13 +102,17 @@ export const getDomainStatus = async (req, res) => {
     );
 
     const data = await vercelRes.json();
-    res.json(data);
 
+    // ✅ Send only true verified if Vercel verified
+    return res.json({
+      verified: data?.verified === true ? true : false,
+    });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
 };
 
+// ✅ Verify: ONLY update DB if Vercel confirms real verification
 export const verifyDomain = async (req, res) => {
   try {
     const { domain } = req.params;
@@ -69,15 +127,19 @@ export const verifyDomain = async (req, res) => {
 
     const data = await vercelRes.json();
 
-    if (data?.verified) {
-      await DomainMap.findOneAndUpdate(
-        { domain },
-        { status: "verified" }
-      );
+    if (data?.verified === true) {
+      await DomainMap.findOneAndUpdate({ domain }, { status: "verified" });
+
+      return res.json({
+        verified: true,
+        msg: "✅ Domain verified from Vercel",
+      });
     }
 
-    res.json(data);
-
+    return res.json({
+      verified: false,
+      msg: "⚠️ Not verified yet. Add DNS TXT and wait.",
+    });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
