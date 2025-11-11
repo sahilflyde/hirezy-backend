@@ -58,6 +58,10 @@ var _createdPageModel = _interopRequireDefault(require("./models/createdPageMode
 
 var _themeSettingRoutes = _interopRequireDefault(require("./routes/themeSettingRoutes.js"));
 
+var _socket = require("socket.io");
+
+var _http = _interopRequireDefault(require("http"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 // Load environment variables
@@ -111,6 +115,16 @@ app.use("/api/header-section", _headerRoutes["default"]);
 app.use("/api/createdpage", _createdPageRoutes["default"]);
 app.use("/api", _themeSettingRoutes["default"]);
 app.use("/api/domain", _domainRoutes["default"]);
+
+var server = _http["default"].createServer(app);
+
+var io = new _socket.Server(server, {
+  cors: {
+    origin: ["http://localhost:3000", "http://localhost:5173", "*"],
+    methods: ["GET", "POST"]
+  }
+});
+global.io = io;
 app.get("*", function _callee(req, res) {
   var host, map, page;
   return regeneratorRuntime.async(function _callee$(_context) {

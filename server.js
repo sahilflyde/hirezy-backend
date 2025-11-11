@@ -23,10 +23,12 @@ import footerRoutes from "./routes/footerRoutes.js";
 import testimonialSectionRoutes from "./routes/testimonialsRoutes.js";
 import headerSectionRoutes from "./routes/headerRoutes.js";
 import createdPageRoutes from "./routes/createdPageRoutes.js";
-import domainRoutes from "./routes/domainRoutes.js"
-import DomainMap from "./models/domainMapModel.js"
+import domainRoutes from "./routes/domainRoutes.js";
+import DomainMap from "./models/domainMapModel.js";
 import CreatedPage from "./models/createdPageModel.js";
-import themeSettingRoutes from "./routes/themeSettingRoutes.js"
+import themeSettingRoutes from "./routes/themeSettingRoutes.js";
+import { Server } from "socket.io";
+import http from "http";
 // Load environment variables
 dotenv.config();
 
@@ -91,11 +93,18 @@ app.use("/api/testimonial-section", testimonialSectionRoutes);
 app.use("/api/header-section", headerSectionRoutes);
 app.use("/api/createdpage", createdPageRoutes);
 app.use("/api", themeSettingRoutes);
-
-
 app.use("/api/domain", domainRoutes);
 
+const server = http.createServer(app);
 
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000", "http://localhost:5173", "*"],
+    methods: ["GET", "POST"],
+  },
+});
+
+global.io = io;
 
 app.get("*", async (req, res) => {
   const host = req.headers.host;

@@ -57,51 +57,45 @@ var updateThemeSetting = function updateThemeSetting(req, res) {
       switch (_context2.prev = _context2.next) {
         case 0:
           theme = req.body.theme;
-
-          if (["light", "dark"].includes(theme)) {
-            _context2.next = 3;
-            break;
-          }
-
-          return _context2.abrupt("return", res.status(400).json({
-            success: false,
-            message: "Invalid theme"
-          }));
-
-        case 3:
-          _context2.next = 5;
+          _context2.next = 3;
           return regeneratorRuntime.awrap(_themeSettingModel["default"].findOne());
 
-        case 5:
+        case 3:
           setting = _context2.sent;
 
           if (setting) {
-            _context2.next = 12;
+            _context2.next = 10;
             break;
           }
 
-          _context2.next = 9;
+          _context2.next = 7;
           return regeneratorRuntime.awrap(_themeSettingModel["default"].create({
             theme: theme
           }));
 
-        case 9:
+        case 7:
           setting = _context2.sent;
-          _context2.next = 15;
+          _context2.next = 13;
           break;
 
-        case 12:
+        case 10:
           setting.theme = theme;
-          _context2.next = 15;
+          _context2.next = 13;
           return regeneratorRuntime.awrap(setting.save());
 
-        case 15:
+        case 13:
+          if (global.io) {
+            global.io.emit("theme-updated", theme);
+            console.log("Socket called");
+            console.log("Connected Clients:", global.io.engine.clientsCount);
+          }
+
           res.json({
             success: true,
             theme: theme
           });
 
-        case 16:
+        case 15:
         case "end":
           return _context2.stop();
       }

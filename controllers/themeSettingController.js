@@ -10,15 +10,18 @@ export const getThemeSetting = async (req, res) => {
 export const updateThemeSetting = async (req, res) => {
   const { theme } = req.body;
 
-  if (!["light", "dark"].includes(theme))
-    return res.status(400).json({ success: false, message: "Invalid theme" });
-
   let setting = await ThemeSetting.findOne();
-  if (!setting) {
-    setting = await ThemeSetting.create({ theme });
-  } else {
+  if (!setting) setting = await ThemeSetting.create({ theme });
+  else {
     setting.theme = theme;
     await setting.save();
+  }
+
+  
+  if (global.io) {
+    global.io.emit("theme-updated", theme);
+    console.log("Socket called")
+    console.log("Connected Clients:", global.io.engine.clientsCount);
   }
 
   res.json({ success: true, theme });
