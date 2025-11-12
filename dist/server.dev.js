@@ -48,13 +48,9 @@ var _testimonialsRoutes = _interopRequireDefault(require("./routes/testimonialsR
 
 var _headerRoutes = _interopRequireDefault(require("./routes/headerRoutes.js"));
 
-var _createdPageRoutes = _interopRequireDefault(require("./routes/createdPageRoutes.js"));
+var _createdWebsitesRoutes = _interopRequireDefault(require("./routes/createdWebsitesRoutes.js"));
 
 var _domainRoutes = _interopRequireDefault(require("./routes/domainRoutes.js"));
-
-var _domainMapModel = _interopRequireDefault(require("./models/domainMapModel.js"));
-
-var _createdPageModel = _interopRequireDefault(require("./models/createdPageModel.js"));
 
 var _themeSettingRoutes = _interopRequireDefault(require("./routes/themeSettingRoutes.js"));
 
@@ -112,7 +108,7 @@ app.use("/api/faq-section", _faqRoutes["default"]);
 app.use("/api/footer-section", _footerRoutes["default"]);
 app.use("/api/testimonial-section", _testimonialsRoutes["default"]);
 app.use("/api/header-section", _headerRoutes["default"]);
-app.use("/api/createdpage", _createdPageRoutes["default"]);
+app.use("/api/websites", _createdWebsitesRoutes["default"]);
 app.use("/api", _themeSettingRoutes["default"]);
 app.use("/api/domain", _domainRoutes["default"]);
 
@@ -124,80 +120,7 @@ var io = new _socket.Server(server, {
     methods: ["GET", "POST"]
   }
 });
-global.io = io;
-app.get("*", function _callee(req, res) {
-  var host, map, page, html;
-  return regeneratorRuntime.async(function _callee$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.prev = 0;
-          host = req.headers.host;
-
-          if (host) {
-            _context.next = 4;
-            break;
-          }
-
-          return _context.abrupt("return", res.status(400).send("❌ Host header missing"));
-
-        case 4:
-          // ✅ remove www.
-          host = host.replace("www.", "");
-          console.log("🌐 Incoming domain:", host); // ✅ find domain mapping in DB
-
-          _context.next = 8;
-          return regeneratorRuntime.awrap(_domainMapModel["default"].findOne({
-            domain: host,
-            status: "verified"
-          }));
-
-        case 8:
-          map = _context.sent;
-
-          if (map) {
-            _context.next = 12;
-            break;
-          }
-
-          console.log("❌ Domain not found or not verified");
-          return _context.abrupt("return", res.send("🔴 Domain not configured or pending verification."));
-
-        case 12:
-          _context.next = 14;
-          return regeneratorRuntime.awrap(_createdPageModel["default"].findOne({
-            slug: map.pageSlug
-          }));
-
-        case 14:
-          page = _context.sent;
-
-          if (page) {
-            _context.next = 18;
-            break;
-          }
-
-          console.log("⚠ Page not found for slug:", map.pageSlug);
-          return _context.abrupt("return", res.send("⚠ Page not found! Ask admin to publish again."));
-
-        case 18:
-          // ✅ Render HTML
-          html = "\n      <!DOCTYPE html>\n      <html>\n        <head>\n          <title>".concat(page.title || map.pageSlug, "</title>\n          <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n          <meta charset=\"UTF-8\" />\n          <style>\n            body { margin:0; padding:0; font-family: sans-serif; }\n          </style>\n        </head>\n        <body>\n          <div id=\"root\"></div>\n\n          <script>\n            window.pageData = ").concat(JSON.stringify(page.components), ";\n          </script>\n\n          <script src=\"/main.js\"></script>\n        </body>\n      </html>\n    ");
-          return _context.abrupt("return", res.status(200).send(html));
-
-        case 22:
-          _context.prev = 22;
-          _context.t0 = _context["catch"](0);
-          console.error("SERVER ERROR:", _context.t0);
-          res.status(500).send("⚠ Server error occurred");
-
-        case 26:
-        case "end":
-          return _context.stop();
-      }
-    }
-  }, null, null, [[0, 22]]);
-}); // Error handling middleware
+global.io = io; // Error handling middleware
 
 app.use(function (err, req, res, next) {
   console.error(err.stack);

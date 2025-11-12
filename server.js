@@ -22,10 +22,8 @@ import faqRoutes from "./routes/faqRoutes.js";
 import footerRoutes from "./routes/footerRoutes.js";
 import testimonialSectionRoutes from "./routes/testimonialsRoutes.js";
 import headerSectionRoutes from "./routes/headerRoutes.js";
-import createdPageRoutes from "./routes/createdPageRoutes.js";
+import createdWebsiteRoutes from "./routes/createdWebsitesRoutes.js";
 import domainRoutes from "./routes/domainRoutes.js";
-import DomainMap from "./models/domainMapModel.js";
-import CreatedPage from "./models/createdPageModel.js";
 import themeSettingRoutes from "./routes/themeSettingRoutes.js";
 import { Server } from "socket.io";
 import http from "http";
@@ -91,7 +89,7 @@ app.use("/api/faq-section", faqRoutes);
 app.use("/api/footer-section", footerRoutes);
 app.use("/api/testimonial-section", testimonialSectionRoutes);
 app.use("/api/header-section", headerSectionRoutes);
-app.use("/api/createdpage", createdPageRoutes);
+app.use("/api/websites", createdWebsiteRoutes);
 app.use("/api", themeSettingRoutes);
 app.use("/api/domain", domainRoutes);
 
@@ -111,61 +109,7 @@ const io = new Server(server, {
 
 global.io = io;
 
-app.get("*", async (req, res) => {
-  try {
-    let host = req.headers.host;
 
-    if (!host) return res.status(400).send("❌ Host header missing");
-
-    // ✅ remove www.
-    host = host.replace("www.", "");
-
-    console.log("🌐 Incoming domain:", host);
-
-    // ✅ find domain mapping in DB
-    const map = await DomainMap.findOne({ domain: host, status: "verified" });
-    if (!map) {
-      console.log("❌ Domain not found or not verified");
-      return res.send("🔴 Domain not configured or pending verification.");
-    }
-
-    // ✅ get linked page
-    const page = await CreatedPage.findOne({ slug: map.pageSlug });
-    if (!page) {
-      console.log("⚠ Page not found for slug:", map.pageSlug);
-      return res.send("⚠ Page not found! Ask admin to publish again.");
-    }
-
-    // ✅ Render HTML
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>${page.title || map.pageSlug}</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <meta charset="UTF-8" />
-          <style>
-            body { margin:0; padding:0; font-family: sans-serif; }
-          </style>
-        </head>
-        <body>
-          <div id="root"></div>
-
-          <script>
-            window.pageData = ${JSON.stringify(page.components)};
-          </script>
-
-          <script src="/main.js"></script>
-        </body>
-      </html>
-    `;
-
-    return res.status(200).send(html);
-  } catch (err) {
-    console.error("SERVER ERROR:", err);
-    res.status(500).send("⚠ Server error occurred");
-  }
-});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
