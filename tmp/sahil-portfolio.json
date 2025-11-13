@@ -1,0 +1,98 @@
+{
+  "_id": "69147b33d4997536dac27006",
+  "siteId": "site_47j6gn1rvjl9",
+  "__v": 0,
+  "createdAt": "2025-11-12T12:18:59.996Z",
+  "domain": null,
+  "favicon": null,
+  "pages": [
+    {
+      "name": "home",
+      "route": "home",
+      "components": [
+        {
+          "type": "section-header",
+          "props": {
+            "label": "Dynamic Label",
+            "title": "Dynamic Title",
+            "subtitle": "Dynamic Subtitle"
+          },
+          "children": []
+        },
+        {
+          "type": "image-card",
+          "props": {
+            "heading": "Demo Heading",
+            "description": "Lorem Ipsum",
+            "imageLink": "https://ik.imagekit.io/flyde/Hirezy/Widget.png"
+          },
+          "children": []
+        },
+        {
+          "type": "grid-section",
+          "props": {
+            "columns": 4,
+            "gap": "24px",
+            "minColWidth": "200px",
+            "showHeader": true,
+            "label": "Features",
+            "title": "Features",
+            "subtitle": "Hello world"
+          },
+          "children": [
+            {
+              "type": "image-card",
+              "props": {
+                "heading": "Grid Image",
+                "description": "Inside Grid",
+                "imageLink": "https://ik.imagekit.io/flyde/Hirezy/Widget.png"
+              }
+            },
+            {
+              "type": "image-card",
+              "props": {
+                "heading": "Grid Image",
+                "description": "Inside Grid",
+                "imageLink": "https://ik.imagekit.io/flyde/Hirezy/Widget.png"
+              }
+            },
+            {
+              "type": "image-card",
+              "props": {
+                "heading": "Grid Image",
+                "description": "Inside Grid",
+                "imageLink": "https://ik.imagekit.io/flyde/Hirezy/Widget.png"
+              }
+            },
+            {
+              "type": "image-card",
+              "props": {
+                "heading": "Grid Image",
+                "description": "Inside Grid",
+                "imageLink": "https://ik.imagekit.io/flyde/Hirezy/Widget.png"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "about",
+      "route": "about",
+      "components": [
+        {
+          "type": "section-header",
+          "props": {
+            "label": "About",
+            "title": "Sahil Kalkal",
+            "subtitle": "Chora jaat ka, samosa 8 ka."
+          },
+          "children": []
+        }
+      ]
+    }
+  ],
+  "slug": "sahil-portfolio",
+  "updatedAt": "2025-11-13T10:39:28.567Z",
+  "websiteName": "sahil-portfolio"
+}

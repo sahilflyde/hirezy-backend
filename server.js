@@ -27,6 +27,8 @@ import domainRoutes from "./routes/domainRoutes.js";
 import themeSettingRoutes from "./routes/themeSettingRoutes.js";
 import { Server } from "socket.io";
 import http from "http";
+import deployRoutes from "./routes/deployRoutesNew.js"
+
 // Load environment variables
 dotenv.config();
 
@@ -92,6 +94,7 @@ app.use("/api/header-section", headerSectionRoutes);
 app.use("/api/websites", createdWebsiteRoutes);
 app.use("/api", themeSettingRoutes);
 app.use("/api/domain", domainRoutes);
+app.use("/api/deploy", deployRoutes);
 
 const server = http.createServer(app);
 

@@ -58,6 +58,8 @@ var _socket = require("socket.io");
 
 var _http = _interopRequireDefault(require("http"));
 
+var _deployRoutesNew = _interopRequireDefault(require("./routes/deployRoutesNew.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 // Load environment variables
@@ -111,6 +113,7 @@ app.use("/api/header-section", _headerRoutes["default"]);
 app.use("/api/websites", _createdWebsitesRoutes["default"]);
 app.use("/api", _themeSettingRoutes["default"]);
 app.use("/api/domain", _domainRoutes["default"]);
+app.use("/api/deploy", _deployRoutesNew["default"]);
 
 var server = _http["default"].createServer(app);
 
