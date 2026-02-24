@@ -27,7 +27,7 @@ import domainRoutes from "./routes/domainRoutes.js";
 import themeSettingRoutes from "./routes/themeSettingRoutes.js";
 import { Server } from "socket.io";
 import http from "http";
-import deployRoutes from "./routes/deployRoutesNew.js"
+import deployRoutes from "./routes/deployRoutesNew.js";
 
 // Load environment variables
 dotenv.config();
@@ -50,6 +50,7 @@ const corsOptions = [
   "http://localhost:5050",
   "https://hirezy-admin.vercel.app",
   "https://hirezy-frontend.vercel.app",
+  "https://hirezy-theme.vercel.app/",
   "*",
 ];
 
@@ -60,7 +61,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  })
+  }),
 );
 app.options("*", cors(corsOptions)); // Handle preflight requests
 app.use(bodyParser.json());
@@ -111,8 +112,6 @@ const io = new Server(server, {
 });
 
 global.io = io;
-
-
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -70,7 +70,7 @@ _dotenv["default"].config(); // Connect to MongoDB
 
 var app = (0, _express["default"])(); // CORS Configuration
 
-var corsOptions = ["http://localhost:5173", "http://localhost:3000", "http://localhost:3001", "https://gtw-admin.vercel.app", "https://gtw-admin.vercel.app/", "https://generaltechworks.com", "https://hirezy-web.vercel.app", "http://localhost:5050", "https://hirezy-admin.vercel.app", "https://hirezy-frontend.vercel.app", "*"]; // Middleware
+var corsOptions = ["http://localhost:5173", "http://localhost:3000", "http://localhost:3001", "https://gtw-admin.vercel.app", "https://gtw-admin.vercel.app/", "https://generaltechworks.com", "https://hirezy-web.vercel.app", "http://localhost:5050", "https://hirezy-admin.vercel.app", "https://hirezy-frontend.vercel.app", "https://hirezy-theme.vercel.app/", "*"]; // Middleware
 
 app.use((0, _cors["default"])({
   origin: corsOptions,
