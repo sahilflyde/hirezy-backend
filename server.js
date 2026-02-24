@@ -38,29 +38,34 @@ connectDB();
 // Initialize Express app
 const app = express();
 
-// CORS Configuration
-const corsOptions = [
+const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "http://localhost:3001",
   "https://gtw-admin.vercel.app",
-  "https://gtw-admin.vercel.app/",
   "https://generaltechworks.com",
   "https://hirezy-web.vercel.app",
   "http://localhost:5050",
   "https://hirezy-admin.vercel.app",
   "https://hirezy-frontend.vercel.app",
-  "https://hirezy-theme.vercel.app/",
-  "*",
+  "https://hirezy-theme.vercel.app",
 ];
 
-// Middleware
 app.use(
   cors({
-    origin: corsOptions,
+    origin: function (origin, callback) {
+      // Allow Postman / Server requests
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 app.options("*", cors(corsOptions)); // Handle preflight requests
