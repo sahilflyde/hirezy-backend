@@ -48,6 +48,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://hirezy-theme.vercel.app",
   "https://hirezy-frontend.vercel.app",
+  "https://hirezy-admin.vercel.app/",
 ];
 
 const corsOptions = {
@@ -69,9 +70,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
-/* =========================
-   MIDDLEWARE
-========================= */
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
