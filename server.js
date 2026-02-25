@@ -48,7 +48,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://hirezy-theme.vercel.app",
   "https://hirezy-frontend.vercel.app",
-  "https://hirezy-admin.vercel.app/",
+  "https://hirezy-admin.vercel.app",
 ];
 
 const corsOptions = {

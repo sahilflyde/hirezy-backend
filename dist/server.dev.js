@@ -76,7 +76,7 @@ var server = _http["default"].createServer(app);
 ========================= */
 
 
-var allowedOrigins = ["http://localhost:3000", "http://localhost:5173", "https://hirezy-theme.vercel.app", "https://hirezy-frontend.vercel.app", "https://hirezy-admin.vercel.app/"];
+var allowedOrigins = ["http://localhost:3000", "http://localhost:5173", "https://hirezy-theme.vercel.app", "https://hirezy-frontend.vercel.app", "https://hirezy-admin.vercel.app"];
 var corsOptions = {
   origin: function origin(_origin, callback) {
     if (!_origin) return callback(null, true); // Allow Postman/server-to-server
