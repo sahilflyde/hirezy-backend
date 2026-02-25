@@ -54,11 +54,11 @@ var _domainRoutes = _interopRequireDefault(require("./routes/domainRoutes.js"));
 
 var _themeSettingRoutes = _interopRequireDefault(require("./routes/themeSettingRoutes.js"));
 
+var _deployRoutesNew = _interopRequireDefault(require("./routes/deployRoutesNew.js"));
+
 var _socket = require("socket.io");
 
 var _http = _interopRequireDefault(require("http"));
-
-var _deployRoutesNew = _interopRequireDefault(require("./routes/deployRoutesNew.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -69,28 +69,42 @@ _dotenv["default"].config(); // Connect to MongoDB
 (0, _db["default"])(); // Initialize Express app
 
 var app = (0, _express["default"])();
-var allowedOrigins = ["http://localhost:5173", "http://localhost:3000", "http://localhost:3001", "https://gtw-admin.vercel.app", "https://generaltechworks.com", "https://hirezy-web.vercel.app", "http://localhost:5050", "https://hirezy-admin.vercel.app", "https://hirezy-frontend.vercel.app", "https://hirezy-theme.vercel.app"];
-app.use((0, _cors["default"])({
+
+var server = _http["default"].createServer(app);
+/* =========================
+   CORS CONFIGURATION
+========================= */
+
+
+var allowedOrigins = ["http://localhost:3000", "http://localhost:5173", "https://hirezy-theme.vercel.app", "https://hirezy-frontend.vercel.app"];
+var corsOptions = {
   origin: function origin(_origin, callback) {
-    // Allow Postman / Server requests
-    if (!_origin) return callback(null, true);
+    if (!_origin) return callback(null, true); // Allow Postman/server-to-server
 
     if (allowedOrigins.includes(_origin)) {
       callback(null, true);
     } else {
+      console.log("Blocked by CORS:", _origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
-}));
-app.options("*", (0, _cors["default"])(corsOptions)); // Handle preflight requests
+};
+app.use((0, _cors["default"])(corsOptions));
+app.options("*", (0, _cors["default"])(corsOptions));
+/* =========================
+   MIDDLEWARE
+========================= */
 
 app.use(_bodyParser["default"].json());
 app.use(_bodyParser["default"].urlencoded({
   extended: true
-})); // Routes
+}));
+/* =========================
+   ROUTES
+========================= */
 
 app.get("/", function (req, res) {
   res.json({
@@ -121,26 +135,40 @@ app.use("/api/websites", _createdWebsitesRoutes["default"]);
 app.use("/api", _themeSettingRoutes["default"]);
 app.use("/api/domain", _domainRoutes["default"]);
 app.use("/api/deploy", _deployRoutesNew["default"]);
-
-var server = _http["default"].createServer(app);
+/* =========================
+   SOCKET.IO
+========================= */
 
 var io = new _socket.Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:5173", "https://hirezy-frontend.vercel.app", "*"],
-    methods: ["GET", "POST"]
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
-global.io = io; // Error handling middleware
+global.io = io;
+io.on("connection", function (socket) {
+  console.log("User connected:", socket.id);
+  socket.on("disconnect", function () {
+    console.log("User disconnected:", socket.id);
+  });
+});
+/* =========================
+   ERROR HANDLER
+========================= */
 
 app.use(function (err, req, res, next) {
-  console.error(err.stack);
+  console.error("Error:", err.message);
   res.status(500).json({
     message: "Something went wrong!",
     error: err.message
   });
-}); // Start server
+});
+/* =========================
+   START SERVER
+========================= */
 
-var PORT = 5000;
+var PORT = process.env.PORT || 5000;
 server.listen(PORT, function () {
-  console.log("Server + Socket running on port ".concat(PORT));
+  console.log("\uD83D\uDE80 Server + Socket running on port ".concat(PORT));
 });

@@ -25,9 +25,9 @@ import headerSectionRoutes from "./routes/headerRoutes.js";
 import createdWebsiteRoutes from "./routes/createdWebsitesRoutes.js";
 import domainRoutes from "./routes/domainRoutes.js";
 import themeSettingRoutes from "./routes/themeSettingRoutes.js";
+import deployRoutes from "./routes/deployRoutesNew.js";
 import { Server } from "socket.io";
 import http from "http";
-import deployRoutes from "./routes/deployRoutesNew.js";
 
 // Load environment variables
 dotenv.config();
@@ -37,42 +37,49 @@ connectDB();
 
 // Initialize Express app
 const app = express();
+const server = http.createServer(app);
+
+/* =========================
+   CORS CONFIGURATION
+========================= */
 
 const allowedOrigins = [
-  "http://localhost:5173",
   "http://localhost:3000",
-  "http://localhost:3001",
-  "https://gtw-admin.vercel.app",
-  "https://generaltechworks.com",
-  "https://hirezy-web.vercel.app",
-  "http://localhost:5050",
-  "https://hirezy-admin.vercel.app",
-  "https://hirezy-frontend.vercel.app",
+  "http://localhost:5173",
   "https://hirezy-theme.vercel.app",
+  "https://hirezy-frontend.vercel.app",
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow Postman / Server requests
-      if (!origin) return callback(null, true);
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // Allow Postman/server-to-server
 
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  }),
-);
-app.options("*", cors(corsOptions)); // Handle preflight requests
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
+/* =========================
+   MIDDLEWARE
+========================= */
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Routes
+/* =========================
+   ROUTES
+========================= */
+
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to GTW Backend API" });
 });
@@ -102,32 +109,46 @@ app.use("/api", themeSettingRoutes);
 app.use("/api/domain", domainRoutes);
 app.use("/api/deploy", deployRoutes);
 
-const server = http.createServer(app);
+/* =========================
+   SOCKET.IO
+========================= */
 
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:5173",
-      "https://hirezy-frontend.vercel.app",
-      "*",
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
 global.io = io;
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res
-    .status(500)
-    .json({ message: "Something went wrong!", error: err.message });
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
 });
 
-// Start server
-const PORT = 5000;
+/* =========================
+   ERROR HANDLER
+========================= */
+
+app.use((err, req, res, next) => {
+  console.error("Error:", err.message);
+  res.status(500).json({
+    message: "Something went wrong!",
+    error: err.message,
+  });
+});
+
+/* =========================
+   START SERVER
+========================= */
+
+const PORT = process.env.PORT || 5000;
+
 server.listen(PORT, () => {
-  console.log(`Server + Socket running on port ${PORT}`);
+  console.log(`🚀 Server + Socket running on port ${PORT}`);
 });
